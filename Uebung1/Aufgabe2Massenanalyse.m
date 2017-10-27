@@ -2,7 +2,7 @@
 %
 %Parameter:
 c = 100;        %N/m
-d = 1;          %N*s/m
+d = 1;          %N*s/mM
 tBegin = 0;     %s
 tEnd = 10;      %s
 %Anfangswerte:
@@ -14,7 +14,7 @@ F_t0 = 0;       %N
 M = [];         %Erstelle leere Matrix zum Abspeichern der Werte!
 solverOptionen=odeset('RelTol',1e-3,'AbsTol',1e-6);
 for m = 1 : 1 :10       %Iteriere ueber die Masse mit (aktuell) dem Stufensprung 1 kg
-    [t,x] = ode45(@Zustandsform,[tBegin,tEnd],[y0,yDot0],solverOptionen,m,d,c,F_t0);
+    [t,x] = ode45(@Zustandsform,[tBegin:0.1:tEnd],[y0,yDot0],solverOptionen,m,d,c,F_t0); %Setze die konstante Schrittweite im Zeitvektor fuer den ODE45, dann macht dieser eine konstante Schrittweite!
     M = [M ; m , x(:,2)'];
     plot(t,x)
     hold on
