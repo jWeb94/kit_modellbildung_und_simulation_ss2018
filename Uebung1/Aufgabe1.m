@@ -34,6 +34,6 @@ end
 %Berechne eine Funktion und stelle diese graphisch dar:
 x = sin(w)+sqrt(w);
 plot(w,x)
-xLabel('Laufindex w');
-yLabel('Funktionswert x');
+xlabel('Laufindex w');
+ylabel('Funktionswert x');
 
