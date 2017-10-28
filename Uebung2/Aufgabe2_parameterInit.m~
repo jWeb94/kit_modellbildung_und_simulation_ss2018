@@ -4,9 +4,6 @@ clc
 %
 inputVar = input('enter false to set model 2 to sinwave-input or enter true to select step-input! Please enter: ');
 %
-%Edit: Error-Handle waere noch ganz cool zu wissen!
-%https://de.mathworks.com/help/matlab/ref/try.html
-% -> aehnlich wie in Python!
 if inputVar == true         %Sprunganregung
     disp('selected step-input')
     switchVar = 0;
@@ -19,7 +16,6 @@ else
 end
 %Solver-Optionen:
 relTol = 1e-6;
-stepSize = .001; %Um Modelle in einem Plot vergleichbar zu machen notwendig (?)
 %Parameter
 m = 1;          %kg
 c = 10;         %N/m
@@ -39,9 +35,6 @@ sim('einMassenSchwingerAngeregt');
 sim('uebertragungsFunktion');
 %
 %Vergleich der Plots:
-%Anmerkung: 
-    %Gleiche Solveroptionen, gleiche Zeitschrittweite
-    %Dennoch unterschiedliches Ergebnis-Warum?
 if  switchVar == 1  %dann ist Vergleich der Ausgaben der Modelle einMassenSchwingerAngeregt & ubertragungsFunktion moeglich!
     fkt = plot(tout,yOut_A2);
     hold on
@@ -49,9 +42,5 @@ if  switchVar == 1  %dann ist Vergleich der Ausgaben der Modelle einMassenSchwin
     xlabel('time t [s]');
     ylabel('Auslenkung y [m]');
     title('Vergleich DGL-Modell mit Übertragungsfunktion-Modell')
-    legend([fkt,g_S],{'DGL-Modell' 'Übertragungsfunktion'});
-else
-    disp('no comparison possible!');
-end
-disp('end of the simulation!');
+    legend([fkt,g_S],{'DGL-Modell'}
     
