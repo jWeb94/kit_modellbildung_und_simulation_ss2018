@@ -41,7 +41,7 @@ sim('uebertragungsFunktion');
 %Vergleich der Plots:
 %Anmerkung: 
     %Gleiche Solveroptionen, gleiche Zeitschrittweite
-    %Dennoch unterschiedliches Ergebnis-Warum?
+    %Dennoch unterschiedliches Ergebnis-Warum? !!!!!!!!!!!
 if  switchVar == 1  %dann ist Vergleich der Ausgaben der Modelle einMassenSchwingerAngeregt & ubertragungsFunktion moeglich!
     fkt = plot(tout,yOut_A2);
     hold on
