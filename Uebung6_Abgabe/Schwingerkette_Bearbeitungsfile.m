@@ -112,6 +112,9 @@ title('Eigenfrquenzen');
 
 %% Simulink Referenz-Modell:
 
+    % Frage
+        %Warum passt es nicht? Und ist mein Steifigkeitsverlauf richtig? 
+
 sim('schwingerkette')
 
     % Visualisierung des Vergleichs: 
