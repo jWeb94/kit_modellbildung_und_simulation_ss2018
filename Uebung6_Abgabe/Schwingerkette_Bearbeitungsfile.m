@@ -55,6 +55,7 @@ for n = 1:1:n_max
     
     %Zeitschritt:
     t(n+1) = t(n) + h;
+    lastTime = t(n+1);
 end
 
 figure()
@@ -112,3 +113,23 @@ title('Eigenfrquenzen');
 %% Simulink Referenz-Modell:
 
 sim('schwingerkette')
+
+    % Visualisierung des Vergleichs: 
+figure()
+subplot(2,1,1)
+plot(t, x_Heun(1,:))
+hold on
+plot(tout, x1Simulink, 'LineStyle', '--')
+title('Vergleich x1 Simulink und eigene Implementierung')
+xlabel('t [s]')
+ylabel('Auslenkung x1')
+legend('x1','x1-Simulink')
+
+subplot(2,1,2)
+plot(t, x_Heun(3,:))
+hold on
+plot(tout, x2Simulink, 'LineStyle', '--')
+title('Vergleich x2 Simulink und eigene Implementierung')
+xlabel('t [s]')
+ylabel('Auslenkung x2')
+legend('x2','x2-Simulink')
