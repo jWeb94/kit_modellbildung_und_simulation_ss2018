@@ -6,13 +6,16 @@ clc
 %% Parameter
 g = 9.81;                   % Erdbeschleunigung (m/s^2)
 l = .2;                     % Laenge l (m)
-AnzahlSchritte = 10e4;      % Anzahl der Zeitschritte
+%AnzahlSchritte = 10e4;      % Anzahl der Zeitschritte
 %h = .00001;                   % eine Periode
 h = .0001;                    % stabil; sehr geringer Fehler
 %h = .001;                      % instabil!
 x_0 = [pi/6;0];             % Anfangsbedingungen in Zustandsvektor; x_0=[phi_0; phiDot_0]
 t(1)=0;                     % Initialisierung der Zeit
 
+
+t_max = 10 % s 
+AnzahlSchritte = ceil(t_max/h)
 
 x_Eu_expl(:,1) = x_0;       % Anfangsbedingungen fuer Euler explizit
 x_Eu_impl(:,1) = x_0;       % Anfangsbedingungen fuer Euler implizit
