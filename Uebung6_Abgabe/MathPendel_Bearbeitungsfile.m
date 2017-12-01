@@ -10,7 +10,7 @@ l = .2;                     % Laenge l (m)
 %h = .00001;                   % eine Periode
 h = .0001;                    % stabil; sehr geringer Fehler
 %h = .001;                      % instabil!
-x_0 = [pi/6;0];             % Anfangsbedingungen in Zustandsvektor; x_0=[phi_0; phiDot_0]
+x_0 = [0;0];             % Anfangsbedingungen in Zustandsvektor; x_0=[phi_0; phiDot_0] --> Wenn ich den veraendere, so muss ich ihn in der exakten Gleichung mit veraendern!
 t(1)=0;                     % Initialisierung der Zeit
 
 
@@ -56,7 +56,7 @@ for n=1:1:AnzahlSchritte % Ich muss bei 1 los laufen, da matlab Arrays ab 1 zaeh
 end
 
 %% Aufgabe 2: exakte L�sung
-x_exakt_Variables_1 = dsolve('D2phi + 9.81/0.2*phi = 0', 'phi(0)=pi/6', 'Dphi(0)=0');
+x_exakt_Variables_1 = dsolve('D2phi + 9.81/0.2*phi = 0', 'phi(0)=pi/6', 'Dphi(0)=0');   %Hier phi(0)=pi oder 0 setzen, fuer ausprobieren!
 x_exakt_sym = dsolve('D2phi + g/l*phi = 0', 'phi(0)=pi/6', 'Dphi(0)=0');
 % calculate first derivative:
 x_exakt_Variables_2 = diff(x_exakt_Variables_1);
