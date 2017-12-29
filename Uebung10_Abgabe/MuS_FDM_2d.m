@@ -22,17 +22,20 @@ dt=0.1;
 % Es ist auch möglich, dass maxnt sehr groß gewählt wird,
 % Sie kalulieren die Änderung der Lösung zwischen zwei Zeitschritten
 % und Sie definieren mit dieser ein Abbruchkriterium.
-maxnt=400;
+maxnt=1000;
 
 % Geschwindigkeit des oberen Randes (y=1)
 u0=10.0;
+%u0=20
+%u0=25.0;
+
 
 % Die konvektieve Terme werden mit einer Kombination von zentralen Differenzen
 % und upwind-Differenzen gerechnet. Die Gewichtung wird durch gamma
 % geregelt (gamma ist hier kein Diffusionskoeffizient!).
-% gamma=1 -> reiner upwind Diff.
-% gamma=0 -> reiner zentrale Diff.
-gamma=0.8;
+% gamma=1 %-> reiner upwind Diff.
+% gamma=0 %-> reiner zentrale Diff.
+gamma=0.8;      % Gewichtung zur Berechnung der konvektiven Terme ()
 
 
 % Räumliche Auflösung
@@ -50,18 +53,22 @@ gamma=0.8;
 %
 
 % Anzahl der Knotenpunte
-nx=21;
-ny=21;
+% nx=21;
+% ny=21;
+nx=26;
+ny=26;
 
-
+% Anzahl in Verbindung mit der Indizierung
+    % Randpunkt unten links
 nxm1=nx-1;
 nym1=ny-1;
+    %Randpunkt oben rechts
 nxp1=nx+1;
 nyp1=ny+1;
 nxp2=nx+2;
 nyp2=ny+2;
 
-
+% Schrittweite
 dx=1/(nxm1);
 dy=1/(nym1);
 
@@ -79,12 +86,15 @@ mue=0.00001808;
 
 nue=mue/rho;
 
-% Initialisierung
+% Initialisierung - speichere alle Werte ab, deshalb Punkt2, da auf diesem
+% noch die Randwerte mit gespeichert werden
 u=zeros(nxp2,nyp2);
 v=zeros(nxp2,nyp2);
 p=zeros(nxp2,nyp2);
 
-% Koeffizienten für die Ableitungen in der Randnähe
+% Koeffizienten für die Ableitungen in der Randnähe -
+% Dirlecht-Randbedinungen, da ich ihm Werte fuer die Geschwindigkeit
+% vorgebe, nicht fuer die Ableitung der Geschwindigkeit
 ew=ones(nxp1,1);
 eo=ones(nxp1,1);
 es=ones(nyp1,1);
@@ -99,37 +109,43 @@ rhs=zeros(nxp2,nyp2);
 % Zeitschleife
 for nt=1:maxnt
     
+    %%Teil 1%%
+    
     % Randbedingungen für die Geschwindigkeiten
-    for i=2:nxp1
+    for i=2:nxp1        % x - Achse
         u(i,1)=-u(i,2);
         u(i,nyp2)=2.*u0-u(i,nxp1);
         v(i,1)=0;
         v(i,nyp1)=0;
     end
-    for j=2:nyp1
+    for j=2:nyp1        % y - Achse
         u(1,j)=0;
         u(nxp1,j)=0;
         v(1,j)=-v(2,j);
         v(nxp2,j)=-v(nxp1,j);
     end
 
-    % konvektive und viskose Terme
+    % konvektive und(!) viskose Terme
+        % init Ergebnismatrizen (da 2D --> Matrix)
     F=zeros(nxp1,nyp1);
     G=zeros(nxp1,nyp1);
     for j=2:nyp1
-        for i=2:nx
-            %
+        for i=2:nx  % berechnung der allgemeinen Erhaltungsgleichungs-PDE in x-Richtung
+            % Ableitungen/Finite Differenzen
+                % Kombination aus CDS und UWS
             duudx=0.25*( (u(i,j)+u(i+1,j))^2 - (u(i-1,j)+u(i,j))^2 + gamma*( abs(u(i,j)+u(i+1,j))*(u(i,j)-u(i+1,j)) - abs(u(i-1,j)+u(i,j))*(u(i-1,j)-u(i,j)) ) )/dx;
             duvdy=0.25*( (v(i,j)+v(i+1,j))*(u(i,j)+u(i,j+1)) - (v(i,j-1)+v(i+1,j-1))*(u(i,j-1)+u(i,j)) + gamma*( abs(v(i,j)+v(i+1,j))*(u(i,j)-u(i,j+1)) - abs(v(i,j-1)+v(i+1,j-1))*(u(i,j-1)-u(i,j)) ) )/dy;
+                % klassische zweite Ableitung
             d2udx2=(u(i+1,j)-2.*u(i,j)+u(i-1,j))/dx^2;
             d2udy2=(u(i,j+1)-2.*u(i,j)+u(i,j-1))/dy^2;
             %
-            % Term für die zeitliche Diskretisierung
-            F(i,j)=dt*(nue*(d2udx2+d2udy2) - duudx - duvdy) + u(i,j);
+            % Term für die zeitliche Diskretisierung - Euler-Explizit (u(x_i+1) = h*f(x_i,t_i)+u(x_i, t_i))
+            % f(x_i, t_i) = nue*(...)
+            F(i,j)=dt*(nue*(d2udx2+d2udy2) - duudx - duvdy) + u(i,j);       % hier steckt die Geschwindigkeit in x - Richtung drin!
         end
     end
-    for j=2:ny
-        for i=2:nxp1
+    for j=2:ny      % berechnung der allgemeinen Erhaltungsgleichungs-PDE in Y-Richtung
+        for i=2:nxp1    
             %
             duvdx=0.25*( (u(i,j)+u(i,j+1))*(v(i,j)+v(i+1,j)) - (u(i-1,j)+u(i-1,j+1))*(v(i-1,j)+v(i,j)) + gamma*( abs(u(i,j)+u(i,j+1))*(v(i,j)-v(i+1,j)) - abs(u(i-1,j)+u(i-1,j+1))*(v(i-1,j)-v(i,j)) ) )/dx;
             dvvdy=0.25*( (v(i,j)+v(i,j+1))^2 - (v(i,j-1)+v(i,j))^2 + gamma*( abs(v(i,j)+v(i,j+1))*(v(i,j)-v(i,j+1)) - abs(v(i,j-1)+v(i,j))*(v(i,j-1)-v(i,j)) ) )/dy;
@@ -137,16 +153,20 @@ for nt=1:maxnt
             d2vdy2=(v(i,j+1)-2.*v(i,j)+v(i,j-1))/dy^2;
             %
             % Term für die zeitliche Diskretisierung
-            G(i,j)=dt*(nue*(d2vdx2+d2vdy2) - duvdx - dvvdy) + v(i,j);
+            G(i,j)=dt*(nue*(d2vdx2+d2vdy2) - duvdx - dvvdy) + v(i,j);       % hier steckt die Geschwindigkeit in Y -Richtung drin!
         end
     end
 
+    
+    %%Teil 2%%
     
     % Poissongleichung für den Druck wird gelöst
     
     % Der Relaxationsfaktor soll zwischen 0 und 2 gewählt werden
     % in der Praxis wird oft 1.7 verwendet, für 1 ergibt sich
-    % das Gauß-Seidel-Verfahren
+    % das Gauß-Seidel-Verfahren - Verfahren zur Loesung eines LGS
+    % Gauß-Seidel ist ein ITERATIVES Loesungsverfahren zur loesung von
+    % DGLn 
     omega=1.7;
     
     % maximale Anzahl von Iterationen bei Lösung der Poissongleichung
@@ -157,7 +177,9 @@ for nt=1:maxnt
 
         %err=zeros(nxp1,nyp1);
 
-        % Randwerte werden aktualisiert
+        % Randwerte werden aktualisiert - Schreibe fixe Randwerte aus
+        % Teil1 in G, da diese vorher noch nicht zum beschreiben moeglich
+        % waren!
         for i=2:nxp1
             p(i,1)=p(i,2);
             p(i,nyp2)=p(i,nyp1);
@@ -171,7 +193,7 @@ for nt=1:maxnt
             F(nxp1,j)=u(nxp1,j);
         end
 
-        for j=2:nyp1
+        for j=2:nyp1        % berechnung des Drucks auf Basis der zuvor bestimmten Geschwindigkeit
             for i=2:nxp1
                 rhs(i,j)=((F(i,j)-F(i-1,j))/dx + (G(i,j)-G(i,j-1))/dy)/dt;
                 p(i,j)=(1.-omega)*p_old(i,j) + omega*((eo(i)*p_old(i+1,j)+ew(i)*p(i-1,j))/dx^2 + (en(j)*p_old(i,j+1)+es(j)*p(i,j-1))/dy^2 - rhs(i,j))/((eo(i)+ew(i))/dx^2 + (en(j)+es(j))/dy^2);
@@ -192,6 +214,8 @@ for nt=1:maxnt
 %        if errit < 
 %        end
     end
+    
+    %%Teil 3%%
     
     % Die neuen Werte für die Geschwindigkeiten in der Zeit
     % wird hier mit dem expliziten Euler Schema gerechnet
@@ -272,6 +296,9 @@ for nt=1:maxnt
         quiver(X,Y,up,vp,'w')
         text(0,1.05,['DCFL= ',num2str(dcfl)])
         text(0.3,1.05,['Zeit= ',num2str(zeit)])
+        xlabel('x (m)')
+        ylabel('y (m)')
+        %title('Durckverlauf und Geschwindigkeitsvektoren im Modellversuch')
         hold off
         drawnow
     end
