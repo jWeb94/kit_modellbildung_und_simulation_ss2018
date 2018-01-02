@@ -75,14 +75,14 @@ dy=1/(nym1);
 % Materialeigenschaften
 % Dichte
 % Luft
-rho=1.25;
+%rho=1.25;
 % Wasser
-%rho=998;
+rho=998;
 % Dynamische Viskosität
 % Luft
-mue=0.00001808;
+%mue=0.00001808;
 % Wasser
-%mue=0.001895;
+mue=0.001895;
 
 nue=mue/rho;
 
