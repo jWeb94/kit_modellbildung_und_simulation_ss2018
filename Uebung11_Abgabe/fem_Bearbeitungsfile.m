@@ -4,7 +4,7 @@ clear all; close all; clc
 L = 100;                        %% cm
 % AnzahlElemente = 10;
 % AnzahlElemente = 100;
-AnzahlElemente = 10000;
+AnzahlElemente = 10;
 LElemente = L/AnzahlElemente;   %% Laenge eines Elementes
 Knoten = 0:L/AnzahlElemente:L;  %% Knotenvektor
 AElement = (10-0.09*Knoten);    %% Querschnittsverlauf
