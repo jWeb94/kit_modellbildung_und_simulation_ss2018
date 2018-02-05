@@ -84,6 +84,8 @@ zeitTest = fahrZeit(1) : schrittweiteZeit : fahrZeit(2);
 a_max = [];
 schrittNr = 0;
 
+% 29x16x15 = 6960 Einzelversuche
+
 for j = 1:length(masseTest)                                 % Masse
     a_max_temp = [];
     for k = 1:length(hubTest)                               % Hub
@@ -106,12 +108,8 @@ for j = 1:length(masseTest)                                 % Masse
 end
 
 
-% Visualisierung
-
-
-
-% Visualisierung der maximalen Beschleunigung a_2 des Systems bei Variation
-% von Masse und Hub - die kritischste Zeit ist immer genommen (wurde auch itertiert)
+% Visualisierung in anderem Skript, damit ich nicht fuer jeden Plot neu
+% simulieren muss!
 
 % Theoretisch sollte man immer die geringste Zeit einsetzen!
 
